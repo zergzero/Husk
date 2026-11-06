@@ -1,0 +1,107 @@
+name: Build Husk IPA (3.4 + bq.log fix)
+
+# Fork -> Actions -> "Build Husk IPA (3.4 + bq.log fix)" -> Run workflow.
+# The artifact is an unsigned IPA; sign it yourself (SideStore/AltStore/Sideloadly).
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Husk tag or branch to build (3.4 is the 2026-11-05 release)"
+        required: false
+        default: "3.4"
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || '3.4' }}
+
+      - name: Show what is being built
+        run: |
+          git log -1 --oneline
+          sw_vers
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Apply the JNI_OnLoad fix
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, pathlib
+          b64 = """
+          ZGlmZiAtLWdpdCBhL3NyYy90cmFuc2xhdGlvbi1sYXllci1uZXh0L2h1c2stdGwtam5pLWhsZS5jIGIvc3JjL3RyYW5zbGF0aW9u
+          LWxheWVyLW5leHQvaHVzay10bC1qbmktaGxlLmMKaW5kZXggNWY2YWVmYi4uYjA3ZTg1NiAxMDA2NDQKLS0tIGEvc3JjL3RyYW5z
+          bGF0aW9uLWxheWVyLW5leHQvaHVzay10bC1qbmktaGxlLmMKKysrIGIvc3JjL3RyYW5zbGF0aW9uLWxheWVyLW5leHQvaHVzay10
+          bC1qbmktaGxlLmMKQEAgLTIwLDEyICsyMCwxMyBAQAogCiAjaW5jbHVkZSAiaHVzay10bC1iaW9uaWMuaCIKICNpbmNsdWRlICJo
+          dXNrLXRsLWludGVybmFsLmgiCiAjaW5jbHVkZSAiaHVzay10bC1hcm0zMi5oIgogI2luY2x1ZGUgImh1c2stdGwtbGQuaCIKICNp
+          bmNsdWRlICJodXNrLXRsLWRleGluZGV4LmgiCisjaW5jbHVkZSAiaHVzay10bC1kdm0uaCIKIAogLyogLS0tLS0tLS0tLS0tLS0t
+          LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHN0YXRlICovCiAKIHZvaWQgdGxfaHR0
+          cF9pbnN0YWxsKHZvaWQpOwogCiBzdGF0aWMgc3RydWN0IHsKQEAgLTU1MywxMiArNTU0LDI3IEBAIHN0YXRpYyBib29sIGxvYWRf
+          bmF0aXZlX2xpYnJhcnkoY29uc3QgY2hhciAqYmFzZSkKICAgICAgICAgfQogICAgICAgICBpZiAob25sb2FkKSB7CiAgICAgICAg
+          ICAgICBpbnQzMl90IHZlciA9IHRsX2EzMl9pc19mbigodm9pZCAqKW9ubG9hZCkKICAgICAgICAgICAgICAgICA/IHRsX2EzMl9q
+          bmlfb25sb2FkKG93bmVyID8gb3duZXIgOiBMKQogICAgICAgICAgICAgICAgIDogb25sb2FkKHRsX2puaV92bSgpLCBOVUxMKTsK
+          ICAgICAgICAgICAgIHRsX2xvZ19saW5lKCJqbmk6ICVzIEpOSV9PbkxvYWQgLT4gJSN4IiwgYmFzZSwgdmVyKTsKKyAgICAgICAg
+          ICAgIC8qIEEgbGlicmFyeSBtYXkgcHJvYmUgZm9yIGl0cyBvcHRpb25hbCBKYXZhIGhhbGYgZnJvbSBKTklfT25Mb2FkIGFuZCBs
+          ZWF2ZSB0aGUgZmFpbGVkIGxvb2t1cCdzIGV4Y2VwdGlvbgorICAgICAgICAgICAgICogcGVuZGluZy4gQnFMb2cgZG9lcyBlbnYt
+          PkZpbmRDbGFzcygiYnEvbG9nIikgdGhlcmUsIGFuZCB0aGlzIGFwcCdzIHNocmlua2VyIHJlbmFtZWQgdGhhdCBjbGFzcyAodG8g
+          bTIudGMpLAorICAgICAgICAgICAgICogc28gdGhlIGxvb2t1cCBhbHdheXMgZmFpbHMgd2hpbGUgdGhlIGxpYnJhcnkgaXRzZWxm
+          IGxvYWRzIGFuZCByZXR1cm5zIGEgdmFsaWQgdmVyc2lvbi4gVGhlIGFwcCdzIG93bgorICAgICAgICAgICAgICogc3RhdGljIGlu
+          aXRpYWxpc2VyIGNhdGNoZXMgRXhjZXB0aW9uIG9ubHksIHNvIHRoZSBOb0NsYXNzRGVmRm91bmRFcnJvciBsZWZ0IGJlaGluZCBl
+          bmRzIGl0cyBtYWluIHRocmVhZDoKKyAgICAgICAgICAgICAqICJ0aGUgYXBwJ3MgbWFpbiB0aHJlYWQgZW5kZWQgd2l0aCBqYXZh
+          LmxhbmcuTm9DbGFzc0RlZkZvdW5kRXJyb3I6IGJxL2xvZyIuIEEgZmFpbGVkIGNsYXNzIGxvb2t1cCBpcyBhCisgICAgICAgICAg
+          ICAgKiBwcm9iZSwgbm90IGEgZmFpbGVkIGxvYWQgLS0gcmVwb3J0IGl0IGFuZCBjbGVhciBpdC4gQW55IG90aGVyIGV4Y2VwdGlv
+          biBhIGxpYnJhcnkgdGhyb3dzIGZyb20gSk5JX09uTG9hZAorICAgICAgICAgICAgICogc3RpbGwgcmVhY2hlcyBTeXN0ZW0ubG9h
+          ZExpYnJhcnkncyBjYWxsZXIsIGFzIGJlZm9yZS4gKi8KKyAgICAgICAgICAgIGlmICh0bF9qbmlfcGVuZGluZygpICYmIHRsX2R2
+          bV9ydW5uaW5nKCkpIHsKKyAgICAgICAgICAgICAgICBjaGFyIHdoeVszMDBdOworICAgICAgICAgICAgICAgIGlmICh0bF9kdm1f
+          ZGVzY3JpYmVfcGVuZGluZyh3aHksIHNpemVvZiB3aHkpCisgICAgICAgICAgICAgICAgICAgICYmIChzdHJzdHIod2h5LCAiTm9D
+          bGFzc0RlZkZvdW5kRXJyb3IiKSB8fCBzdHJzdHIod2h5LCAiQ2xhc3NOb3RGb3VuZEV4Y2VwdGlvbiIpKSkgeworICAgICAgICAg
+          ICAgICAgICAgICB0bF9sb2dfbGluZSgiam5pOiAlcyBKTklfT25Mb2FkIGxvb2tlZCBmb3IgYSBjbGFzcyB0aGUgQVBLIGRvZXMg
+          bm90IGRlZmluZSAoJXMpOyBjbGVhcmVkIiwgYmFzZSwgd2h5KTsKKyAgICAgICAgICAgICAgICAgICAgdGxfam5pX2NsZWFyKCk7
+          CisgICAgICAgICAgICAgICAgfQorICAgICAgICAgICAgfQogICAgICAgICB9CiAgICAgfQogICAgIHJldHVybiB0cnVlOwogfQog
+          c3RhdGljIHZvaWQgU3lzdGVtX2xvYWQodGxfamNhbGwgKmMpCiB7CmRpZmYgLS1naXQgYS9zcmMvdHJhbnNsYXRpb24tbGF5ZXIt
+          bmV4dC9odXNrLXRsLWpuaS5jIGIvc3JjL3RyYW5zbGF0aW9uLWxheWVyLW5leHQvaHVzay10bC1qbmkuYwppbmRleCA5MDUxYzRl
+          Li4zNTI0MWY1IDEwMDY0NAotLS0gYS9zcmMvdHJhbnNsYXRpb24tbGF5ZXItbmV4dC9odXNrLXRsLWpuaS5jCisrKyBiL3NyYy90
+          cmFuc2xhdGlvbi1sYXllci1uZXh0L2h1c2stdGwtam5pLmMKQEAgLTExMjAsMTIgKzExMjAsMTUgQEAgc3RhdGljIGludDMyX3Qg
+          am5pX1JlZ2lzdGVyTmF0aXZlcyh2b2lkICplbnYsIGpvIGNscywgY29uc3QgbmF0aXZlX21ldGhvZCAqbSwgaW4KICAgICAgICAg
+          Yy0+bmF0aXZlc1tjLT5ubmF0aXZlc10ubmFtZSA9IHN0cmR1cChtW2ldLm5hbWUpOwogICAgICAgICBjLT5uYXRpdmVzW2MtPm5u
+          YXRpdmVzXS5zaWcgPSBzdHJkdXAobVtpXS5zaWcpOwogICAgICAgICBjLT5uYXRpdmVzW2MtPm5uYXRpdmVzXS5mbiA9IG1baV0u
+          Zm47CiAgICAgICAgIGMtPm5uYXRpdmVzKys7CiAgICAgICAgIFRSQUNFKCJqbmk6IFJlZ2lzdGVyTmF0aXZlcyAlcy4lcyVzIC0+
+          ICVwIiwgYy0+bmFtZSwgbVtpXS5uYW1lLCBtW2ldLnNpZywgbVtpXS5mbik7CiAgICAgfQorICAgIC8qIE9uZSBsaW5lIHBlciBy
+          ZWdpc3RyYXRpb246IGEgcHJvdGVjdG9yJ3MgVk0gKERleFZNUCdzIGxpYmRleHZtcC5zbyByZWdpc3RlcnMgY1YvY0kvLi4uIGZv
+          ciB0aGUgbWV0aG9kcyB3aG9zZQorICAgICAqIGJvZGllcyBpdCBpbnRlcnByZXRzKSBzaG93cyBoZXJlLCBhbmQgc28gZG9lcyBh
+          IGxpYnJhcnkgdGhhdCBsb2FkZWQgYnV0IGJvdW5kIG5vdGhpbmcuICovCisgICAgdGxfbG9nX2xpbmUoImpuaTogUmVnaXN0ZXJO
+          YXRpdmVzICVzOiAlZCBtZXRob2QocykiLCBnaXZlbi0+bmFtZSwgKGludCluKTsKICAgICBwdGhyZWFkX211dGV4X3VubG9jaygm
+          Z19sb2NrKTsKICAgICBfX2F0b21pY19hZGRfZmV0Y2goJmdfbmF0aXZlc19nZW5lcmF0aW9uLCAxLCBfX0FUT01JQ19SRUxFQVNF
+          KTsKICAgICByZXR1cm4gMDsKIH0KIGludDMyX3QgdGxfam5pX3JlZ2lzdGVyX29uZShqb2JqICpjbHMsIGNvbnN0IGNoYXIgKm5h
+          bWUsIGNvbnN0IGNoYXIgKnNpZywgdm9pZCAqZm4pCiB7Cg==
+          """
+          pathlib.Path("husk-bqlog.patch").write_bytes(base64.b64decode(b64))
+          PY
+          git apply --verbose husk-bqlog.patch
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/* || true
+          df -h /
+
+      - name: Install build tools
+        run: |
+          brew install meson ninja pkg-config xcodegen ccache cmake
+          rustup target add aarch64-apple-ios
+
+      - name: Build (takes a while)
+        run: ./scripts/ci_build.sh "$GITHUB_WORKSPACE/build/Husk.ipa"
+
+      - name: Upload IPA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Husk-ipa-3.4
+          path: |
+            build/Husk.ipa
+            build/Husk.tipa
+          if-no-files-found: warn
+          retention-days: 7
