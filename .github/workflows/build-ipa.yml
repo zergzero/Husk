@@ -9,14 +9,19 @@ on:
         description: "Husk tag or branch to build (3.4 is the 2026-11-05 release)"
         required: false
         default: "3.4"
+      runner:
+        description: "macOS runner label (macos-26; try macos-15 if it says not supported)"
+        required: false
+        default: "macos-26"
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: ${{ github.event.inputs.runner || 'macos-26' }}
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
         with:
+          repository: Leviidev/Husk
           ref: ${{ github.event.inputs.ref || '3.4' }}
 
       - name: Show what is being built
@@ -93,7 +98,20 @@ jobs:
           rustup target add aarch64-apple-ios
 
       - name: Build (takes a while)
-        run: ./scripts/ci_build.sh "$GITHUB_WORKSPACE/build/Husk.ipa"
+        run: |
+          set -o pipefail
+          ./scripts/ci_build.sh build/Husk.ipa 2>&1 | tee build-output.log
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build-output.log
+            build/logs/**
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload IPA
         if: always()
