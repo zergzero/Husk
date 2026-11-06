@@ -5,10 +5,6 @@ name: Build Husk IPA (3.4 + bq.log fix)
 on:
   workflow_dispatch:
     inputs:
-      ref:
-        description: "Husk tag or branch to build (3.4 is the 2026-11-05 release)"
-        required: false
-        default: "3.4"
       runner:
         description: "macOS runner label (macos-26; try macos-15 if it says not supported)"
         required: false
@@ -19,13 +15,18 @@ jobs:
     runs-on: ${{ github.event.inputs.runner || 'macos-26' }}
     timeout-minutes: 360
     steps:
+      # The fork itself, always readable with the job's own token.
       - uses: actions/checkout@v4
         with:
-          repository: Leviidev/Husk
-          ref: ${{ github.event.inputs.ref || '3.4' }}
+          persist-credentials: false
 
-      - name: Show what is being built
+      # Tags are not copied into forks, and the job token cannot read another repository,
+      # so 3.4 comes from upstream with an anonymous fetch (public repo).
+      - name: Check out Husk 3.4 from upstream
         run: |
+          set -euxo pipefail
+          git fetch --depth 1 https://github.com/Leviidev/Husk.git refs/tags/3.4:refs/tags/3.4
+          git checkout -q 3.4
           git log -1 --oneline
           sw_vers
           xcodebuild -version
@@ -43,7 +44,7 @@ jobs:
           bC1qbmktaGxlLmMKQEAgLTIwLDEyICsyMCwxMyBAQAogCiAjaW5jbHVkZSAiaHVzay10bC1iaW9uaWMuaCIKICNpbmNsdWRlICJo
           dXNrLXRsLWludGVybmFsLmgiCiAjaW5jbHVkZSAiaHVzay10bC1hcm0zMi5oIgogI2luY2x1ZGUgImh1c2stdGwtbGQuaCIKICNp
           bmNsdWRlICJodXNrLXRsLWRleGluZGV4LmgiCisjaW5jbHVkZSAiaHVzay10bC1kdm0uaCIKIAogLyogLS0tLS0tLS0tLS0tLS0t
-          LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHN0YXRlICovCiAKIHZvaWQgdGxfaHR0
+          LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHN0YXRlICovCiAKIHZvaWQgdGxfaHR0
           cF9pbnN0YWxsKHZvaWQpOwogCiBzdGF0aWMgc3RydWN0IHsKQEAgLTU1MywxMiArNTU0LDI3IEBAIHN0YXRpYyBib29sIGxvYWRf
           bmF0aXZlX2xpYnJhcnkoY29uc3QgY2hhciAqYmFzZSkKICAgICAgICAgfQogICAgICAgICBpZiAob25sb2FkKSB7CiAgICAgICAg
           ICAgICBpbnQzMl90IHZlciA9IHRsX2EzMl9pc19mbigodm9pZCAqKW9ubG9hZCkKICAgICAgICAgICAgICAgICA/IHRsX2EzMl9q
