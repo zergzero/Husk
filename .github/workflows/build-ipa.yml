@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: "macOS runner label: macos-15 (Xcode 16.4) for 3.4; macos-26 needs availability checks disabled"
+        description: "macOS runner: macos-26 (reliable) or macos-15 (Xcode 16.4, often queued)"
         required: false
-        default: "macos-15"
+        default: "macos-26"
 
 jobs:
   build:
-    runs-on: ${{ github.event.inputs.runner || 'macos-15' }}
+    runs-on: ${{ github.event.inputs.runner || 'macos-26' }}
     timeout-minutes: 360
     steps:
       # The fork itself, always readable with the job's own token.
@@ -87,6 +87,25 @@ jobs:
           pathlib.Path("husk-bqlog.patch").write_bytes(base64.b64decode(b64))
           PY
           git apply --verbose husk-bqlog.patch
+
+      # Xcode 26 marks SwiftUI's ToolbarContentBuilder.buildIf as iOS 16+, and the app targets
+      # iOS 15.5, so ProfileView.swift fails to compile ("'buildIf' is only available in iOS 16.0
+      # or newer"). Xcode 16's SDK does not, but macos-15 runners queue for a long time; tell the
+      # compiler to skip availability diagnostics instead, which keeps the 15.5 deployment target.
+      - name: Build settings for Xcode 26
+        run: |
+          set -euxo pipefail
+          xcodebuild -version
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("src/app/project.yml")
+          s = p.read_text()
+          if "OTHER_SWIFT_FLAGS" not in s:
+              s = s.replace('    SWIFT_VERSION: "5.0"',
+                            '    SWIFT_VERSION: "5.0"\n    OTHER_SWIFT_FLAGS: "$(inherited) -Xfrontend -disable-availability-checking"', 1)
+              p.write_text(s)
+          PY
+          grep -n "OTHER_SWIFT_FLAGS" src/app/project.yml
 
       - name: Free disk space
         run: |
