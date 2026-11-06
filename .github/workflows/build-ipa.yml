@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: "macOS runner label (macos-26; try macos-15 if it says not supported)"
+        description: "macOS runner label: macos-15 (Xcode 16.4) for 3.4; macos-26 needs availability checks disabled"
         required: false
-        default: "macos-26"
+        default: "macos-15"
 
 jobs:
   build:
-    runs-on: ${{ github.event.inputs.runner || 'macos-26' }}
+    runs-on: ${{ github.event.inputs.runner || 'macos-15' }}
     timeout-minutes: 360
     steps:
       # The fork itself, always readable with the job's own token.
