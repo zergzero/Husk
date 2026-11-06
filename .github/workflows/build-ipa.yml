@@ -95,7 +95,7 @@ jobs:
 
       - name: Install build tools
         run: |
-          brew install meson ninja pkg-config xcodegen ccache cmake
+          brew install meson ninja pkg-config xcodegen ccache cmake qemu
           python3 -m pip install --break-system-packages pyyaml || python3 -m pip install --user pyyaml
           rustup target add aarch64-apple-ios
 
