@@ -89,9 +89,8 @@ jobs:
           git apply --verbose husk-bqlog.patch
 
       # Xcode 26 marks SwiftUI's ToolbarContentBuilder.buildIf as iOS 16+, and the app targets
-      # iOS 15.5, so ProfileView.swift fails to compile ("'buildIf' is only available in iOS 16.0
-      # or newer"). Xcode 16's SDK does not, but macos-15 runners queue for a long time; tell the
-      # compiler to skip availability diagnostics instead, which keeps the 15.5 deployment target.
+      # iOS 15.5, so ProfileView.swift fails to compile. Xcode 16's SDK does not, but macos-15
+      # runners queue for a long time; skip availability diagnostics instead, keeping 15.5.
       - name: Build settings for Xcode 26
         run: |
           set -euxo pipefail
@@ -106,6 +105,27 @@ jobs:
               p.write_text(s)
           PY
           grep -n "OTHER_SWIFT_FLAGS" src/app/project.yml
+
+      # libhuskps4.dylib is the PS4 layer, built from Bachata-S4 and husk-fex checkouts that are not in
+      # this repository, so ci_build.sh cannot produce it. Drop its project entry (3 comment lines, the
+      # framework line, and its 3 options) and the packaging check: the app already handles its absence
+      # ("This copy of Husk doesn't have the PS4 layer"); Android apps do not use it.
+      - name: Drop the PS4 layer
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("src/app/project.yml")
+          lines = p.read_text().splitlines(True)
+          i = next(i for i, l in enumerate(lines) if "libhuskps4.dylib" in l)
+          del lines[i - 3:i + 4]
+          p.write_text("".join(lines))
+          q = pathlib.Path("scripts/package_ipa.sh")
+          t = q.read_text()
+          q.write_text(t.replace("libqemu-aarch64-softmmu.dylib libANGLE-shared.dylib libhuskps4.dylib",
+                                 "libqemu-aarch64-softmmu.dylib libANGLE-shared.dylib"))
+          PY
+          grep -c libhuskps4 src/app/project.yml scripts/package_ipa.sh || true
 
       - name: Free disk space
         run: |
