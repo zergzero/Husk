@@ -138,6 +138,21 @@ jobs:
           python3 -m pip install --break-system-packages pyyaml || python3 -m pip install --user pyyaml
           rustup target add aarch64-apple-ios
 
+      # The Dalvik runtime's boot class path (libcore, ICU, husk-framework.dex, framework-res) is
+      # built by scripts/build_java_runtime.sh from a LineageOS APEX tree that is not in this
+      # repository, so the app would start without it ("dvm: no java/lang/Object on the boot class
+      # path"). The official 3.4 IPA carries exactly that folder; take it from there.
+      - name: Get the Java runtime from the official 3.4 IPA
+        run: |
+          set -euxo pipefail
+          curl -fL --retry 3 -o "$RUNNER_TEMP/Husk-3.4.ipa" https://github.com/Leviidev/Husk/releases/download/3.4/Husk.ipa
+          unzip -q "$RUNNER_TEMP/Husk-3.4.ipa" -d "$RUNNER_TEMP/husk-release"
+          JRT="$RUNNER_TEMP/husk-release/Payload/Husk.app/java-runtime"
+          test -f "$JRT/husk-framework.dex"
+          mkdir -p build/java-runtime
+          cp -R "$JRT/." build/java-runtime/
+          du -sh build/java-runtime
+
       - name: Build (takes a while)
         run: |
           set -o pipefail
