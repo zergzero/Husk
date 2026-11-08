@@ -190,17 +190,24 @@ jobs:
           cp "$RUNNER_TEMP/husk-release/Payload/Husk.app/cacert.pem" build/java-runtime/cacert.pem
 
       # Android's Java trust store: husk-tl-bionic-io.c maps /system/etc/security/cacerts to the
-      # runtime's cacerts/ folder. Split the CA bundle the app carries into Android's hashed files
-      # (subject_hash_old + ".0"), the layout TrustedCertificateStore reads.
+      # runtime's cacerts/ folder, with Android's hashed file names (subject_hash_old + ".0").
       - name: Build the Java trust store
         run: |
           set -euxo pipefail
-          mkdir -p build/java-runtime/cacerts build/certs
-          csplit -s -z -f build/certs/cert- -b '%d.pem' build/java-runtime/cacert.pem '/-----BEGIN CERTIFICATE-----/' '{*}' || true
-          for f in build/certs/cert-*.pem; do
-            h=$(openssl x509 -subject_hash_old -in "$f" -noout)
-            cp "$f" "build/java-runtime/cacerts/$h.0"
-          done
+          mkdir -p build/java-runtime/cacerts
+          python3 - <<'PY'
+          import pathlib, re, subprocess, tempfile
+          pem = pathlib.Path("build/java-runtime/cacert.pem").read_text()
+          certs = re.findall(r"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----", pem, re.S)
+          out = pathlib.Path("build/java-runtime/cacerts")
+          for cert in certs:
+              f = tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False)
+              f.write(cert)
+              f.close()
+              h = subprocess.check_output(["openssl", "x509", "-subject_hash_old", "-in", f.name, "-noout"]).decode().strip()
+              (out / (h + ".0")).write_text(cert)
+          print("trusted roots:", len(certs))
+          PY
           ls build/java-runtime/cacerts | wc -l
 
       - name: Build (takes a while)
