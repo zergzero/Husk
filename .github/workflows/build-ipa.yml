@@ -82,7 +82,42 @@ jobs:
           YXRpdmVzICVzOiAlZCBtZXRob2QocykiLCBnaXZlbi0+bmFtZSwgKGludCluKTsKICAgICBwdGhyZWFkX211dGV4X3VubG9jaygm
           Z19sb2NrKTsKICAgICBfX2F0b21pY19hZGRfZmV0Y2goJmdfbmF0aXZlc19nZW5lcmF0aW9uLCAxLCBfX0FUT01JQ19SRUxFQVNF
           KTsKICAgICByZXR1cm4gMDsKIH0KIGludDMyX3QgdGxfam5pX3JlZ2lzdGVyX29uZShqb2JqICpjbHMsIGNvbnN0IGNoYXIgKm5h
-          bWUsIGNvbnN0IGNoYXIgKnNpZywgdm9pZCAqZm4pCiB7Cg==
+          bWUsIGNvbnN0IGNoYXIgKnNpZywgdm9pZCAqZm4pCiB7CmRpZmYgLS1naXQgYS9zcmMvdHJhbnNsYXRpb24tbGF5ZXItbmV4dC9o
+          dXNrLXRsLWR2bS5jIGIvc3JjL3RyYW5zbGF0aW9uLWxheWVyLW5leHQvaHVzay10bC1kdm0uYwppbmRleCBiNTUzNTc2Li5mNTQ0
+          YjM4IDEwMDY0NAotLS0gYS9zcmMvdHJhbnNsYXRpb24tbGF5ZXItbmV4dC9odXNrLXRsLWR2bS5jCisrKyBiL3NyYy90cmFuc2xh
+          dGlvbi1sYXllci1uZXh0L2h1c2stdGwtZHZtLmMKQEAgLTU4NiwxMiArNTg2LDEzIEBAIGR2bV9tZXRob2QgKmR2bV9maW5kX3Zp
+          cnR1YWwodGxfamNsYXNzICpyZWNlaXZlciwgY29uc3QgY2hhciAqbmFtZSwgY29uc3QgY2hhciAqCiAgICAgICAgIGZvciAoaW50
+          IGkgPSAwOyBpIDwgay0+bnZtOyBpKyspIHsKICAgICAgICAgICAgIGR2bV9tZXRob2QgKm0gPSAmay0+dm1baV07CiAgICAgICAg
+          ICAgICBpZiAoc3RyY21wKG0tPm5hbWUsIG5hbWUpIHx8IHN0cmNtcChtLT5zaWcsIHNpZykpIGNvbnRpbnVlOwogICAgICAgICAg
+          ICAgaWYgKCEobS0+ZmxhZ3MgJiAweDQwMCkpIHJldHVybiBtOwogICAgICAgICAgICAgaWYgKCFhYnN0cmFjdF9oaXQpIGFic3Ry
+          YWN0X2hpdCA9IG07CiAgICAgICAgIH0KKyAgICBpZiAoIWFic3RyYWN0X2hpdCAmJiBjKSB0bF9sb2dfbGluZSgiZHZtOiBubyBp
+          bXBsZW1lbnRhdGlvbiBvZiAlcyVzIG9uICVzICglZCB2aXJ0dWFsIG1ldGhvZHMpIiwgbmFtZSwgc2lnLCBjLT5uYW1lLCBjLT5u
+          dm0pOwogICAgIC8qIGEgZGVmYXVsdCBtZXRob2QgZnJvbSBhbiBpbnRlcmZhY2UgKi8KICAgICBmb3IgKGR2bV9jbGFzcyAqayA9
+          IGM7IGs7IGsgPSBrLT5zdXBlcikKICAgICAgICAgZm9yIChpbnQgaSA9IDA7IGkgPCBrLT5uaWZhY2VzOyBpKyspIHsKICAgICAg
+          ICAgICAgIGR2bV9jbGFzcyAqaWMgPSBkdm1fY2xhc3Nfb2Yoay0+aWZhY2VzW2ldKTsKICAgICAgICAgICAgIGlmICghaWMpIGNv
+          bnRpbnVlOwogICAgICAgICAgICAgZHZtX21ldGhvZCAqbSA9IGR2bV9maW5kX21ldGhvZChpYywgbmFtZSwgc2lnLCBmYWxzZSk7
+          CkBAIC0yMTA4LDEyICsyMTA5LDMwIEBAIGNoYXIgZ19kdm1fYm9vdF9wYXRoWzQwOTZdOwogYm9vbCB0bF9kdm1fc3RhcnQoY29u
+          c3QgY2hhciAqY29uc3QgKmJvb3QsIGludCBuYm9vdCkKIHsKICAgICBzaXplX3QgayA9IDA7CiAgICAgZm9yIChpbnQgaSA9IDA7
+          IGkgPCBuYm9vdCAmJiBrIDwgc2l6ZW9mKGdfZHZtX2Jvb3RfcGF0aCk7IGkrKykKICAgICAgICAgayArPSAoc2l6ZV90KXNucHJp
+          bnRmKGdfZHZtX2Jvb3RfcGF0aCArIGssIHNpemVvZihnX2R2bV9ib290X3BhdGgpIC0gaywgIiVzJXMiLCBpID8gIjoiIDogIiIs
+          IGJvb3RbaV0pOwogICAgIGZvciAoaW50IGkgPSAwOyBpIDwgbmJvb3Q7IGkrKykgaWYgKCFvcGVuX3BhdGgoYm9vdFtpXSkpIHRs
+          X2xvZ19saW5lKCJkdm06IGNvdWxkIG5vdCBvcGVuICVzIiwgYm9vdFtpXSk7CisKKyAgICAvKiBUaGUgSmF2YSB0cnVzdCBzdG9y
+          ZS4gQW5kcm9pZCByZWFkcyBpdHMgcm9vdHMgZnJvbSAvc3lzdGVtL2V0Yy9zZWN1cml0eS9jYWNlcnRzOyB0aGUgYXBwIGNhcnJp
+          ZXMKKyAgICAgKiB0aGUgc2FtZSBmaWxlcyB1bmRlciA8amF2YSBydW50aW1lPi9jYWNlcnRzLCB3aGljaCBodXNrLXRsLWJpb25p
+          Yy1pby5jIG1hcHMgdGhlIHBsYXRmb3JtIHBhdGhzIHRvLgorICAgICAqIFdpdGhvdXQgdGhpcywgZXZlcnkgVExTIGhhbmRzaGFr
+          ZSBmcm9tIEphdmEgZmFpbHMgd2l0aCAiVHJ1c3QgYW5jaG9yIC4uLiBub3QgZm91bmQiLiAqLworICAgIGlmIChuYm9vdCA+IDAg
+          JiYgYm9vdFswXSkgeworICAgICAgICB2b2lkIHRsX3NldF9jYWNlcnRzX2Rpcihjb25zdCBjaGFyICpkaXIpOworICAgICAgICBj
+          b25zdCBjaGFyICpqID0gc3Ryc3RyKGJvb3RbMF0sICIvY29tLmFuZHJvaWQuYXJ0L2phdmFsaWIvIik7CisgICAgICAgIGlmIChq
+          KSB7CisgICAgICAgICAgICBjaGFyIHJvb3RbMTAwMF0sIGNhY1sxMTAwXTsKKyAgICAgICAgICAgIHNpemVfdCBuID0gKHNpemVf
+          dCkoaiAtIGJvb3RbMF0pOworICAgICAgICAgICAgaWYgKG4gPj0gc2l6ZW9mIHJvb3QpIG4gPSBzaXplb2Ygcm9vdCAtIDE7Cisg
+          ICAgICAgICAgICBtZW1jcHkocm9vdCwgYm9vdFswXSwgbik7CisgICAgICAgICAgICByb290W25dID0gMDsKKyAgICAgICAgICAg
+          IHNucHJpbnRmKGNhYywgc2l6ZW9mIGNhYywgIiVzL2NhY2VydHMiLCByb290KTsKKyAgICAgICAgICAgIHRsX3NldF9jYWNlcnRz
+          X2RpcihjYWMpOworICAgICAgICAgICAgdGxfbG9nX2xpbmUoImR2bTogdHJ1c3RlZCByb290czogJXMiLCBjYWMpOworICAgICAg
+          ICB9CisgICAgfQogICAgIGlmICghY2RlZl9maW5kKCJqYXZhL2xhbmcvT2JqZWN0IikpIHsgdGxfbG9nX2xpbmUoImR2bTogbm8g
+          amF2YS9sYW5nL09iamVjdCBvbiB0aGUgYm9vdCBjbGFzcyBwYXRoIik7IHJldHVybiBmYWxzZTsgfQogICAgIGR2bV9uYXRpdmVz
+          X2luaXQoKTsKICAgICB0bF9kdm0gPSAma19ob29rczsKICAgICBnX3J1bm5pbmcgPSB0cnVlOwogICAgIC8qIGNsYXNzZXMgZGVj
+          bGFyZWQgYmVmb3JlIHRoZSBydW50aW1lIHN0YXJ0ZWQgKEh1c2sncyBvd24gSmF2YSB3b3JsZCk6IHRob3NlIGl0IGhhcyBieXRl
+          Y29kZSBmb3IgYmVjb21lIGl0cyAqLwogICAgIHRsX2puaV9lYWNoX2RlY2xhcmVkKHJlYXR0YWNoKTsK
           """
           pathlib.Path("husk-bqlog.patch").write_bytes(base64.b64decode(b64))
           PY
@@ -152,6 +187,21 @@ jobs:
           mkdir -p build/java-runtime
           cp -R "$JRT/." build/java-runtime/
           du -sh build/java-runtime
+          cp "$RUNNER_TEMP/husk-release/Payload/Husk.app/cacert.pem" build/java-runtime/cacert.pem
+
+      # Android's Java trust store: husk-tl-bionic-io.c maps /system/etc/security/cacerts to the
+      # runtime's cacerts/ folder. Split the CA bundle the app carries into Android's hashed files
+      # (subject_hash_old + ".0"), the layout TrustedCertificateStore reads.
+      - name: Build the Java trust store
+        run: |
+          set -euxo pipefail
+          mkdir -p build/java-runtime/cacerts build/certs
+          csplit -s -z -f build/certs/cert- -b '%d.pem' build/java-runtime/cacert.pem '/-----BEGIN CERTIFICATE-----/' '{*}' || true
+          for f in build/certs/cert-*.pem; do
+            h=$(openssl x509 -subject_hash_old -in "$f" -noout)
+            cp "$f" "build/java-runtime/cacerts/$h.0"
+          done
+          ls build/java-runtime/cacerts | wc -l
 
       - name: Build (takes a while)
         run: |
