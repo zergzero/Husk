@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 360
     steps:
       # The fork itself, always readable with the job's own token.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
 
@@ -341,7 +341,7 @@ jobs:
 
       - name: Upload build logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: build-logs
           path: |
@@ -352,7 +352,7 @@ jobs:
 
       - name: Upload IPA
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Husk-ipa-3.4
           path: |
